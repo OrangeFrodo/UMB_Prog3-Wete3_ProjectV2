@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Files
+src/main/java/com/example/demo/bucket/BucketName.java
+src/main/java/com/example/demo/config/AmazonConfig.java
