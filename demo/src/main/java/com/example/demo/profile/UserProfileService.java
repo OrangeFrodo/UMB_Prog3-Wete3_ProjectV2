@@ -29,6 +29,28 @@ public class UserProfileService {
         return userProfileDataAccessService.getUserProfiles();
     }
 
+    public byte[] downloadUserProfileImage(UUID userProfileId) {
+        UserProfile user = getUserProfile(userProfileId);
+
+        String path = String.format("%s/%s",
+                BucketName.PROFILE_IMAGE.getBucketName(),
+                user.getUserProfileId());
+
+        return user.getUserProfileImageLink()
+                .map(key -> fileStore.download(path, key))
+                .orElse(new byte[0]);
+    }
+
+    private UserProfile getUserProfile(UUID userProfileId) {
+        UserProfile user = userProfileDataAccessService
+                .getUserProfiles()
+                .stream()
+                .filter(userProfile -> userProfile.getUserProfileId().equals(userProfileId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(String.format("User profile %s not found", userProfileId)));
+        return user;
+    }
+
     public void uploadUserProfileImage(UUID userProfileId, MultipartFile file) {
         // 1. Check if image is not empty
         if(file.isEmpty()){
@@ -41,12 +63,7 @@ public class UserProfileService {
         }
 
         // 3. The user exists in our database
-        UserProfile user = userProfileDataAccessService
-                .getUserProfiles()
-                .stream()
-                .filter(userProfile -> userProfile.getUserProfileId().equals(userProfileId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(String.format("User profile %s not found", userProfileId)));
+        UserProfile user = getUserProfile(userProfileId);
 
         // 4. Grab some metadata from file if any
         Map<String, String> metadata = new HashMap<>();
@@ -64,4 +81,5 @@ public class UserProfileService {
             throw new IllegalStateException(e);
         }
     }
+
 }
