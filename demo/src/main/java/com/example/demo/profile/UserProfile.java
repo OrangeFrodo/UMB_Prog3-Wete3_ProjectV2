@@ -27,7 +27,7 @@ public class UserProfile {
         return username;
     }
 
-    // Optional profileImagelink
+    // Optional profile Imagelink
     public Optional<String> getUserProfileImageLink() {
         return Optional.ofNullable(userProfileImageLink);
     }

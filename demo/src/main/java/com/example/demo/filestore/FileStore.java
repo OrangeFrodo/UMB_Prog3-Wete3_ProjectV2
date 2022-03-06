@@ -16,6 +16,7 @@ public class FileStore {
     private final AmazonS3 s3;
 
     // File it self
+    // Dependency injection
     @Autowired
     public FileStore(AmazonS3 s3) {
         this.s3 = s3;
@@ -30,10 +31,10 @@ public class FileStore {
         ObjectMetadata metadata = new ObjectMetadata();
 
         // Metadata if exists save it
-        optionalMetadata.ifPresent(map -> { // For each save objecst metadata key + value
+        optionalMetadata.ifPresent(map -> { // For each save objects metadata key + value
             if(!map.isEmpty()) {
                 map.forEach(metadata:: addUserMetadata);    // Same as (down)
-                // map.forEach((key, value) -> objectMetadata.addUserMetadata(key, value));
+                // map.forEach((key, value) -> metadata.addUserMetadata(key, value));
             }
         });
 
